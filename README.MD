@@ -1,4 +1,4 @@
-# Coursetro
+# Blockchain Project
 
 I had to make two changes to your smart contract. The first one was to decrease the Solidity version to `0.4.24`. The second change was to add `emit` before `Instructor(_fName, _age);` 
 
