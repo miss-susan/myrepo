@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coursetro</title>
+
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+
+    <script src="js/libs/web3.min.js"></script>
+    <script src="js/libs/jquery-3.3.1.min.js"></script>
+
+</head>
+<body>
+<div class="container">
+
+    <h1>show information</h1>
+    <input type="button" onclick="show_data()" value="show">
+
+    <h2 id="instructor"></h2>
+</div>
+
+<script>
+
+    if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+    } else {
+        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
+
+    web3.eth.defaultAccount = web3.eth.accounts[0];
+    var CoursetroContract = web3.eth.contract([
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "getInstructor",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bytes15"
+                },
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_fName",
+                    "type": "bytes15"
+                },
+                {
+                    "name": "_age",
+                    "type": "uint256"
+                }
+            ],
+            "name": "setInstructor",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "name",
+                    "type": "bytes15"
+                },
+                {
+                    "indexed": false,
+                    "name": "age",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Instructor",
+            "type": "event"
+        }
+    ]);
+
+    function show_data(){
+
+        var Coursetro = CoursetroContract.at('0x17de4f03c0c1f2c43380c0403c0364460b83785d');
+
+        var instructorEvent = Coursetro.Instructor();
+
+        $("#loader").show();
+
+        instructorEvent.watch(function(error, result){
+            if( !error ) {
+                $("#instructor").html(web3.toAscii(result.args.name) + ' (' + result.args.age + ' years old)');
+            } else {
+                console.log(error);
+            }
+
+            $("#loader").hide();
+
+        });
+    }
+
+</script>
+
+
+</body>
+</html>
